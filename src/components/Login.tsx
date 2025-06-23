@@ -3,8 +3,11 @@ import { useAuth } from '../hooks/useAuth'
 import { Navigate, Link } from 'react-router-dom'
 
 const Login: React.FC = () => {
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
+    const [userData, setUserData] = useState({
+        email: '',
+        password: ''
+    })
+
     const { user, signIn, signInWithGoogle, error, loading } = useAuth()
 
     if (user) {
@@ -14,20 +17,14 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
         try {
-            await signIn(email, password)
+            await signIn(userData.email, userData.password)
         } catch (error) {
             console.error('Error de autenticación:', error)
         }
     }
-
-    const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        setEmail(e.target.value)
+    const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+        setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
     }
-
-    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        setPassword(e.target.value)
-    }
-
     const handleGoogleSignIn = async (): Promise<void> => {
         try {
             await signInWithGoogle()
@@ -35,9 +32,6 @@ const Login: React.FC = () => {
             console.error('Error con Google Sign-In:', error)
         }
     }
-
-
-
     return (
         <>
             <h2 >
@@ -57,8 +51,8 @@ const Login: React.FC = () => {
                         id="email"
                         type="email"
                         autoComplete='email'
-                        value={email}
-                        onChange={handleEmailChange}
+                        value={userData.email}
+                        onChange={handleChange}
                         required
                     />
                 </div>
@@ -71,8 +65,8 @@ const Login: React.FC = () => {
                         id="password"
                         type="password"
                         autoComplete='current-password'
-                        value={password}
-                        onChange={handlePasswordChange}
+                        value={userData.password}
+                        onChange={handleChange}
                         required
                     />
                 </div>

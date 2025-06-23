@@ -4,9 +4,12 @@ import { Navigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
 const Register: React.FC = () => {
-    const [userName, setUserName] = useState<string>('')
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
+    const [userData, setUserData] = useState({
+        userName: '',
+        email: '',
+        password: ''
+    })
+
     const { user, signUp, signInWithGoogle, error, loading } = useAuth()
 
     if (user) {
@@ -16,22 +19,15 @@ const Register: React.FC = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
         try {
-            await signUp(email, password, userName)
+            await signUp(userData.email, userData.password, userData.userName)
         } catch (error) {
             console.error('Error de autenticación:', error)
         }
     }
 
-    const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        setEmail(e.target.value)
-    }
 
-    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        setPassword(e.target.value)
-    }
-
-    const handleUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        setUserName(e.target.value)
+    const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+        setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
     }
 
     const handleGoogleSignIn = async (): Promise<void> => {
@@ -64,8 +60,8 @@ const Register: React.FC = () => {
                         id="userName"
                         type="text"
                         autoComplete='username'
-                        value={userName}
-                        onChange={handleUserChange}
+                        value={userData.userName}
+                        onChange={handleChange}
                         required
                     />
                 </div>
@@ -77,8 +73,8 @@ const Register: React.FC = () => {
                         id="email"
                         type="email"
                         autoComplete='email'
-                        value={email}
-                        onChange={handleEmailChange}
+                        value={userData.email}
+                        onChange={handleChange}
                         required
                     />
                 </div>
@@ -91,8 +87,8 @@ const Register: React.FC = () => {
                         id="password"
                         type="password"
                         autoComplete='current-password'
-                        value={password}
-                        onChange={handlePasswordChange}
+                        value={userData.password}
+                        onChange={handleChange}
                         required
                     />
                 </div>
